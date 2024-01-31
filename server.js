@@ -4,6 +4,8 @@ const path = require('path');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
+//Below should give me access to the db.  I think I'm writing it correct.  TEST!!!
+//Maybe just INJECT the data with middleware like in the mini-project?
 const db = path.join(__dirname, './db/db.json');
 
 app.use(express.json());
@@ -18,29 +20,31 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'));
 });
 
-//LINKING THE NOTES.HTML PAGE
+//Linking notes to notes.html
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
 
 app.get('/api/notes', (req, res) => {
-    ///Logic goes here for API Get Request OF NOTES
+    ///API GET REQUEST OF NOTES. LINES 31-37 IN INDEX.JS!!!!!!!!!!!!!! Should this be stringify and not parse???
+    const data = JSON.stringify(fs.readFile(db));
+    res.json(data);
 });
 
 
-//CATCH ALL REDIRECTED TO INDEX FOR NOW
+//catch all redirected to index.html
 app.get('*', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
 // Routing (POST)
 app.post('/api/notes', (req, res) => {
-    ///HERE'S WHERE THE POST LOGIC GOES FOR API
+    ///HERE'S WHERE THE POST LOGIC GOES FOR API.  LINES 39-46 IN INDEX.JS!!!!!!!
 });
 
 // Routing (DELETE)
 app.delete('/api/notes/:id', (req, res) => {
-    //DELETE LOGIC GOES HERE.  DO SOME RESEARCH ON THIS
+    //DELETE LOGIC GOES HERE.  DO SOME RESEARCH ON THIS LINES 48-54 IN INDEX.JS!!!!!!!
 })
 
 // STARTS UP THE SERVER
