@@ -66,6 +66,9 @@ app.post('/api/notes', injectData, (req, res) => {
 // Routing (DELETE)
 app.delete('/api/notes/:id', (req, res) => {
     //DELETE LOGIC GOES HERE.  DO SOME RESEARCH ON THIS LINES 48-54 IN INDEX.JS!!!!!!!
+    //It looks from the index.js that I have to implement some sort of id system. That's how it's targeting.
+    //Maybe I have to alter the one above to assign them on new ones?
+    //Similar to the logic above I'm thinking.  We just need a way to match the incoming delete record to remove from existing db
 })
 
 // STARTS UP THE SERVER
@@ -101,4 +104,6 @@ THEN that note appears in the right-hand column and a "New Note" button appears 
 
 WHEN I click on the "New Note" button in the navigation at the top of the page
 THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column and the button disappears
+
+I googled "How to create unique ID in java" into google and got this.  Make sure to credit.  https://stackoverflow.com/questions/2982748/create-a-guid-uuid-in-java
 */
