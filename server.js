@@ -85,7 +85,9 @@ app.delete('/api/notes/:id', injectData, (req, res) => {
                 console.error(err);
                 res.status(500).json({ error: 'Error. File not deleted.' });
             } else {
-                res.json({ message: "Note deleted successfully" });
+                res.json({ message: "Note deleted successfully"});
+                //redirect them to the /notes page again so it refreshes with updated db on left side after record is removed
+                res.redirect('/notes');
             }
         });
     } 
@@ -132,7 +134,12 @@ First page found that sent me down rabbit hole
 https://stackoverflow.com/questions/2982748/create-a-guid-uuid-in-java
 Official NPM Page
 https://www.npmjs.com/package/uuidv4
+
 Filter Method
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+
+res.redirect()
+https://masteringjs.io/tutorials/express/redirect
+
 
 */
