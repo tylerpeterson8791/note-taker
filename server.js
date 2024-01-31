@@ -25,8 +25,8 @@ app.get('/notes', (req, res) => {
 });
 
 app.get('/api/notes', injectData, (req, res) => {
-    ///API GET REQUEST OF NOTES. LINES 31-37 IN INDEX.JS!!!!!!!!!!!!!!
-   const data = req.database;
+    ///API GET REQUEST OF NOTES. LINES 31-37 IN INDEX.JS
+   const data = req.database.db;
     res.json(data);
 });
 
@@ -37,8 +37,30 @@ app.get('*', (req, res) =>
 );
 
 // Routing (POST)
-app.post('/api/notes', (req, res) => {
-    ///HERE'S WHERE THE POST LOGIC GOES FOR API.  LINES 39-46 IN INDEX.JS!!!!!!!
+app.post('/api/notes', injectData, (req, res) => {
+    ///HERE'S WHERE THE POST LOGIC GOES FOR API.  LINES 39-46 IN INDEX.JS
+    //Grab fetch request
+    const data = req.body;
+    //Declare variable for all notes
+    const notes = req.database.db; 
+    //Declare variable for new note
+    const newNote = {
+      title: req.body.title,
+      text: req.body.text,
+    };
+    //push new note into entire notes list
+    notes.push(newNote);
+    //res with the new notes with the entry added
+    res.json(notes)
+    //reqrite the db file with the added entry
+    fs.writeFile("./db/db.json", JSON.stringify(notes), (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error writing to db.json' });
+      } else {
+        res.json({ message: "Note added successfully" });
+      }
+  })
 });
 
 // Routing (DELETE)
