@@ -88,6 +88,7 @@ app.delete('/api/notes/:id', injectData, (req, res) => {
                 res.json({ message: "Note deleted successfully"});
                 //redirect them to the /notes page again so it refreshes with updated db on left side after record is removed
                 res.redirect('/notes');
+                return;
             }
         });
     } 
