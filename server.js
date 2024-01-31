@@ -1,12 +1,11 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const injectData = require('./middleware/inject-database.js');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
-//Below should give me access to the db.  I think I'm writing it correct.  TEST!!!
-//Maybe just INJECT the data with middleware like in the mini-project?
-const db = path.join(__dirname, './db/db.json');
+
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -25,9 +24,9 @@ app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
 
-app.get('/api/notes', (req, res) => {
-    ///API GET REQUEST OF NOTES. LINES 31-37 IN INDEX.JS!!!!!!!!!!!!!! Should this be stringify and not parse???
-    const data = JSON.stringify(fs.readFile(db));
+app.get('/api/notes', injectData, (req, res) => {
+    ///API GET REQUEST OF NOTES. LINES 31-37 IN INDEX.JS!!!!!!!!!!!!!!
+   const data = req.database;
     res.json(data);
 });
 
