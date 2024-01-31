@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const injectData = require('./middleware/inject-database.js');
+const { v4: uuidv4 } = require('uuid');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -26,7 +27,7 @@ app.get('/notes', (req, res) => {
 
 app.get('/api/notes', injectData, (req, res) => {
     ///API GET REQUEST OF NOTES. LINES 31-37 IN INDEX.JS
-   const data = req.database.db;
+    const data = req.database.db;
     res.json(data);
 });
 
@@ -42,11 +43,12 @@ app.post('/api/notes', injectData, (req, res) => {
     //Grab fetch request
     const data = req.body;
     //Declare variable for all notes
-    const notes = req.database.db; 
+    const notes = req.database.db;
     //Declare variable for new note
     const newNote = {
-      title: req.body.title,
-      text: req.body.text,
+        id: uuidv4(),
+        title: req.body.title,
+        text: req.body.text,
     };
     //push new note into entire notes list
     notes.push(newNote);
@@ -54,13 +56,13 @@ app.post('/api/notes', injectData, (req, res) => {
     res.json(notes)
     //reqrite the db file with the added entry
     fs.writeFile("./db/db.json", JSON.stringify(notes), (err) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error writing to db.json' });
-      } else {
-        res.json({ message: "Note added successfully" });
-      }
-  })
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Error writing to db.json' });
+        } else {
+            res.json({ message: "Note added successfully" });
+        }
+    })
 });
 
 // Routing (DELETE)
@@ -105,5 +107,10 @@ THEN that note appears in the right-hand column and a "New Note" button appears 
 WHEN I click on the "New Note" button in the navigation at the top of the page
 THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column and the button disappears
 
-I googled "How to create unique ID in java" into google and got this.  Make sure to credit.  https://stackoverflow.com/questions/2982748/create-a-guid-uuid-in-java
+I googled "How to create unique ID in java" into google and got this.  Make sure to credit.  
+First page found that sent me down rabbit hole
+https://stackoverflow.com/questions/2982748/create-a-guid-uuid-in-java
+Official NPM Page
+https://www.npmjs.com/package/uuidv4
+
 */
