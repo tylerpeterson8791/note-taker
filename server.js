@@ -58,7 +58,7 @@ app.post('/api/notes', injectData, (req, res) => {
     fs.writeFile("./db/db.json", JSON.stringify(notes), (err) => {
         if (err) {
             console.error(err);
-            res.status(500).json({ error: 'Error writing to db.json' });
+            res.status(500).json({ error: 'Error. File not saved' });
         } else {
             res.json({ message: "Note added successfully" });
         }
@@ -72,28 +72,23 @@ app.delete('/api/notes/:id', injectData, (req, res) => {
     const noteIdToDelete = req.params.id;
     //Declare whole database
     const notes = req.database.db;
-    // Find the index in the array of the note with the specified ID.
-    const noteIndex = notes.findIndex(note => note.id === noteIdToDelete);
 
-    //if it doesn't match any then findIndex throws a -1 position.  Start with if statement does not equal -1
-    if (noteIndex !== -1) {
-        
-        // Remove the note from the array.  I DON"T THINK THIS IS CORRECT!!! NEED TO TROUBLESHOOT!  Is splice not right???
-        newNotes = notes.splice(noteIndex, 1 );
-        
+    // Filter out the note with the specified ID.  Pass on anything not equal to noteToDelete
+    const newNotes = notes.filter(note => note.id !== noteIdToDelete);
+
+    //make sure something was deleted
+    if (newNotes.length < notes.length) {
 
         // Update db.json with the modified notes array
         fs.writeFile("./db/db.json", JSON.stringify(newNotes), (err) => {
             if (err) {
                 console.error(err);
-                res.status(500).json({ error: 'Error writing to db.json' });
+                res.status(500).json({ error: 'Error. File not deleted.' });
             } else {
-                res.json({ message: "Note deleted successfully"});
+                res.json({ message: "Note deleted successfully" });
             }
         });
-    } else {
-        res.status(404).json({ error: 'Note not found' });
-    }
+    } 
 });
 
 
@@ -137,7 +132,7 @@ First page found that sent me down rabbit hole
 https://stackoverflow.com/questions/2982748/create-a-guid-uuid-in-java
 Official NPM Page
 https://www.npmjs.com/package/uuidv4
-findIndex()
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
+Filter Method
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
 
 */
