@@ -66,12 +66,36 @@ app.post('/api/notes', injectData, (req, res) => {
 });
 
 // Routing (DELETE)
-app.delete('/api/notes/:id', (req, res) => {
-    //DELETE LOGIC GOES HERE.  DO SOME RESEARCH ON THIS LINES 48-54 IN INDEX.JS!!!!!!!
-    //It looks from the index.js that I have to implement some sort of id system. That's how it's targeting.
-    //Maybe I have to alter the one above to assign them on new ones?
-    //Similar to the logic above I'm thinking.  We just need a way to match the incoming delete record to remove from existing db
-})
+app.delete('/api/notes/:id', injectData, (req, res) => {
+    //DELETE LOGIC GOES HERE. LINES 48-54 IN INDEX.JS!!!!!!!
+    //Grab params of wildcard and declare variable
+    const noteIdToDelete = req.params.id;
+    //Declare whole database
+    const notes = req.database.db;
+    // Find the index in the array of the note with the specified ID.
+    const noteIndex = notes.findIndex(note => note.id === noteIdToDelete);
+
+    //if it doesn't match any then findIndex throws a -1 position.  Start with if statement does not equal -1
+    if (noteIndex !== -1) {
+        
+        // Remove the note from the array.  I DON"T THINK THIS IS CORRECT!!! NEED TO TROUBLESHOOT!  Is splice not right???
+        newNotes = notes.splice(noteIndex, 1 );
+        
+
+        // Update db.json with the modified notes array
+        fs.writeFile("./db/db.json", JSON.stringify(newNotes), (err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({ error: 'Error writing to db.json' });
+            } else {
+                res.json({ message: "Note deleted successfully"});
+            }
+        });
+    } else {
+        res.status(404).json({ error: 'Note not found' });
+    }
+});
+
 
 // STARTS UP THE SERVER
 app.listen(PORT, () =>
@@ -107,10 +131,13 @@ THEN that note appears in the right-hand column and a "New Note" button appears 
 WHEN I click on the "New Note" button in the navigation at the top of the page
 THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column and the button disappears
 
-I googled "How to create unique ID in java" into google and got this.  Make sure to credit.  
+I googled "How to create unique ID in java" into google and got this.  Make sure to credit: 
+
 First page found that sent me down rabbit hole
 https://stackoverflow.com/questions/2982748/create-a-guid-uuid-in-java
 Official NPM Page
 https://www.npmjs.com/package/uuidv4
+findIndex()
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
 
 */
