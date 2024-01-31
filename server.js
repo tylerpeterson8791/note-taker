@@ -1,10 +1,11 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const injectData = require('./middleware/inject-database.js');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
-const db = path.join(__dirname, './db/db.json');
+
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -18,29 +19,53 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'));
 });
 
-//LINKING THE NOTES.HTML PAGE
+//Linking notes to notes.html
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
 
-app.get('/api/notes', (req, res) => {
-    ///Logic goes here for API Get Request OF NOTES
+app.get('/api/notes', injectData, (req, res) => {
+    ///API GET REQUEST OF NOTES. LINES 31-37 IN INDEX.JS
+   const data = req.database.db;
+    res.json(data);
 });
 
 
-//CATCH ALL REDIRECTED TO INDEX FOR NOW
+//catch all redirected to index.html
 app.get('*', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
 // Routing (POST)
-app.post('/api/notes', (req, res) => {
-    ///HERE'S WHERE THE POST LOGIC GOES FOR API
+app.post('/api/notes', injectData, (req, res) => {
+    ///HERE'S WHERE THE POST LOGIC GOES FOR API.  LINES 39-46 IN INDEX.JS
+    //Grab fetch request
+    const data = req.body;
+    //Declare variable for all notes
+    const notes = req.database.db; 
+    //Declare variable for new note
+    const newNote = {
+      title: req.body.title,
+      text: req.body.text,
+    };
+    //push new note into entire notes list
+    notes.push(newNote);
+    //res with the new notes with the entry added
+    res.json(notes)
+    //reqrite the db file with the added entry
+    fs.writeFile("./db/db.json", JSON.stringify(notes), (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error writing to db.json' });
+      } else {
+        res.json({ message: "Note added successfully" });
+      }
+  })
 });
 
 // Routing (DELETE)
 app.delete('/api/notes/:id', (req, res) => {
-    //DELETE LOGIC GOES HERE.  DO SOME RESEARCH ON THIS
+    //DELETE LOGIC GOES HERE.  DO SOME RESEARCH ON THIS LINES 48-54 IN INDEX.JS!!!!!!!
 })
 
 // STARTS UP THE SERVER
