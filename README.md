@@ -21,6 +21,8 @@
 
   After some research I discovered the UUID NPM.  After installing this I added it to the POST request as well as the DELETE request.  Then for the DELETE section I used the .filter() method to identify the requested delete and keep everything that wasn't requested as a delete.  Then as a percaution I made sure that the new notes list was smaller than the original one and re-wrote the db.
 
+  THIS IS THE DEPLOYED SITE https://note-taker-8791-e764898c16cc.herokuapp.com/
+
   ## Usage
   
   The user begins they start at a simple landing page with a single "Get Started" button that will re-direct them to the Note Taker page itself (./notes)
